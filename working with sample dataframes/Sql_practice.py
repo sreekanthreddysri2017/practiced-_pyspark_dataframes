@@ -205,5 +205,71 @@ Price FOR Country IN (USA,India,Sweden,UK,UAE,China)
 )
 AS UnpivotTable
 
+#creating table fruit_details
+create table fruit_details(product varchar(20),amount int, Country varchar(20) )
 
+#inserr=ting values into the fruit_details table
+insert into fruit_details values('Banana', 1000, 'USA')
 
+insert into fruit_details values('Carrots', 1500, 'India')
+
+insert into fruit_details values('Beans', 1600, 'Sweden')
+
+insert into fruit_details values('Orange', 2000, 'UK')
+
+insert into fruit_details values('Orange', 2000, 'UAE')
+
+insert into fruit_details values('Banana', 400, 'China')
+
+insert into fruit_details values('Carrots', 1200, 'China')
+
+#pivot columns operation on the table fruit_table
+SELECT * from fruit_details
+pivot( sum(amount) for Country in (USA,India,Sweden,UK,UAE,China)) as PivotTable
+
+#unPivot columns operation on the table fruit_table
+SELECT *
+FROM
+(
+SELECT * FROM fruit_details
+PIVOT
+(
+SUM(amount) FOR Country IN (USA,India,Sweden,UK,UAE,China)
+) AS PivotTable
+) P
+UNPIVOT
+(
+Price FOR Country IN (USA,India,Sweden,UK,UAE,China)
+)
+AS UnpivotTable
+
+create table employee_details (emp_name varchar(20),Department varchar(20),salary int)
+
+#inserting values into the table employee_details
+insert into employee_details values('James','Sales',3000)
+
+insert into employee_details values('Michael','Sales',4600)
+
+insert into employee_details values('Robert','Sales',4100)
+
+insert into employee_details values('Maria','Finance',3000)
+
+insert into employee_details values('Raman','Finance',3000)
+
+insert into employee_details values('Scott','Finance',3300)
+
+insert into employee_details values('Jen','Finance',3900)
+
+insert into employee_details values('Jeff','Marketting',3000)
+
+insert into employee_details values('Kumar','Marketting',2000)
+
+select * from employee_details
+
+#selecting first row from each department which contains all details of particular employee
+SELECT emp_name,department,salary FROM (
+  SELECT emp_name, department, salary,
+         ROW_NUMBER() OVER (PARTITION BY department ORDER BY salary asc) AS row_num
+  FROM employee_details
+) subquery
+WHERE row_num = 1;
